@@ -6,7 +6,7 @@
       <header class="hero">
         <div class="hero-accent" aria-hidden="true" />
         <div class="hero-content">
-          <div class="hero-badge">SoPan 搜索聚合引擎</div>
+          <div class="hero-badge">SoSoPan 搜索聚合引擎</div>
           <h1 class="hero-title">
             <span class="hero-title-line">一键检索</span>
             <span class="hero-title-line hero-title-line--accent">全网网盘资源</span>

@@ -6,7 +6,7 @@
           <div class="gate-icon-wrapper">
             <span class="gate-lock-icon">🔒</span>
           </div>
-          <h2 id="gate-title" class="gate-title">SoPan 私密访问</h2>
+          <h2 id="gate-title" class="gate-title">SoSoPan 私密访问</h2>
           <p class="gate-desc">本站已启用访问保护，请输入密码进入主页</p>
           <form @submit.prevent="onSubmit" class="gate-form">
             <input

@@ -57,7 +57,7 @@ export default defineNuxtConfig({
     cacheTtlMinutes: channelsConfig.cacheTtlMinutes,
     public: {
       apiBase: "/api",
-      siteUrl: "https://panseek.pages.dev",
+      siteUrl: "https://sosopan.pages.dev",
       // 向前端暴露默认频道清单
       tgDefaultChannels: channelsConfig.defaultChannels,
     },

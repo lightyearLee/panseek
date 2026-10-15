@@ -1,7 +1,7 @@
 {
-  "name": "sopan",
+  "name": "sosopan",
   "version": "1.0.0",
-  "description": "SoPan · 全网网盘聚合搜索工具",
+  "description": "SoSoPan · 全网网盘聚合搜索工具",
   "type": "module",
   "private": true,
   "author": {

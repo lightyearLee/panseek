@@ -12,7 +12,7 @@
       <nav class="nav">
         <NuxtLink to="/" class="brand">
           <span class="brand-icon">🔍</span>
-          <span class="brand-text">SoPan</span>
+          <span class="brand-text">SoSoPan</span>
         </NuxtLink>
 
         <!-- 移动端菜单按钮 -->

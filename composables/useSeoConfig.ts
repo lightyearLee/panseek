@@ -12,12 +12,12 @@ export function useSeoConfig() {
   const siteUrl = (config.public?.siteUrl as string) || "";
 
   const SEO = {
-    title: "SoPan - 全网网盘聚合搜索",
+    title: "SoSoPan - 全网网盘聚合搜索",
     description:
-      "SoPan 是一款网盘资源聚合搜索工具，支持阿里云盘、夸克网盘、百度网盘、115、迅雷云盘等多平台一键检索，快速发现电影、剧集、音乐、软件等分享资源。",
+      "SoSoPan 是一款网盘资源聚合搜索工具，支持阿里云盘、夸克网盘、百度网盘、115、迅雷云盘等多平台一键检索，快速发现电影、剧集、音乐、软件等分享资源。",
     keywords:
-      "网盘搜索,阿里云盘搜索,夸克网盘搜索,百度网盘搜索,115网盘,迅雷云盘,资源搜索,盘搜,网盘资源,电影资源,剧集搜索,SoPan,网盘聚合搜索",
-    siteName: "SoPan",
+      "网盘搜索,阿里云盘搜索,夸克网盘搜索,百度网盘搜索,115网盘,迅雷云盘,资源搜索,盘搜,搜搜盘,网盘资源,电影资源,剧集搜索,SoSoPan,网盘聚合搜索",
+    siteName: "SoSoPan",
     ogImage: siteUrl ? `${siteUrl}/og.svg` : "/og.svg",
   };
 
