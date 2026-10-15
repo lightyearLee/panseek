@@ -1,7 +1,7 @@
 const API_BASE = "/api";
 
 export function useAuth() {
-  const locked = useState("auth-locked", () => false);
+  const locked = useState("auth-locked", () => true);
   const loading = useState("auth-loading", () => true);
   const error = useState("auth-error", () => "");
 

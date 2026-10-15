@@ -1,23 +1,27 @@
 <template>
   <Teleport to="body">
     <Transition name="gate">
-      <div v-if="visible" class="gate-overlay" data-theme-part="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gate-title">
-        <div class="gate-card" data-theme-part="gate-card">
-          <h2 id="gate-title" class="gate-title">请输入访问密码</h2>
-          <p class="gate-desc">搜索功能已加密保护，输入正确密码后可继续使用</p>
+      <div v-if="visible" class="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+        <div class="gate-card">
+          <div class="gate-icon-wrapper">
+            <span class="gate-lock-icon">🔒</span>
+          </div>
+          <h2 id="gate-title" class="gate-title">PanSeek 私密访问</h2>
+          <p class="gate-desc">本站已启用访问保护，请输入密码进入主页</p>
           <form @submit.prevent="onSubmit" class="gate-form">
             <input
               ref="inputRef"
               v-model="password"
               type="password"
               class="gate-input"
-              placeholder="密码"
+              placeholder="请输入访问密码"
               autocomplete="current-password"
               aria-label="访问密码"
+              autofocus
               @keydown.esc="password = ''" />
             <p v-if="error" class="gate-error">{{ error }}</p>
             <button type="submit" class="gate-btn" :disabled="submitting || !password.trim()">
-              {{ submitting ? "验证中…" : "解锁" }}
+              {{ submitting ? "正在验证…" : "解锁进入主页" }}
             </button>
           </form>
         </div>
@@ -45,11 +49,9 @@ const visible = computed(() => props.show);
 watch(visible, (v) => {
   if (v) {
     password.value = "";
-    // Teleport + Transition 下 nextTick 可能在 DOM 挂载前执行，
-    // 用 requestAnimationFrame 确保 focus 在 Transition enter 后执行
     nextTick(() => requestAnimationFrame(() => inputRef.value?.focus()));
   }
-});
+}, { immediate: true });
 
 function onSubmit() {
   const p = password.value.trim();
@@ -61,94 +63,109 @@ function onSubmit() {
 .gate-overlay {
   position: fixed;
   inset: 0;
-  z-index: 2000;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: var(--bg-primary, #0f172a);
+  backdrop-filter: blur(16px);
 }
 
 .gate-card {
   width: 90%;
-  max-width: 400px;
-  padding: 28px 32px;
-  background: var(--bg-primary, #fff);
+  max-width: 380px;
+  padding: 36px 32px;
+  background: var(--card-bg, rgba(30, 41, 59, 0.7));
   border-radius: var(--radius-lg, 16px);
-  box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
-  border: 1px solid var(--border-light, #e5e7eb);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  text-align: center;
+}
+
+.gate-icon-wrapper {
+  margin-bottom: 16px;
+}
+
+.gate-lock-icon {
+  font-size: 2.5rem;
+  display: inline-block;
 }
 
 .gate-title {
   margin: 0 0 8px;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: var(--text-primary, #1f2937);
+  color: var(--text-primary, #f8fafc);
 }
 
 .gate-desc {
-  margin: 0 0 20px;
-  font-size: 0.9rem;
-  color: var(--text-secondary, #6b7280);
+  margin: 0 0 24px;
+  font-size: 0.88rem;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.5;
 }
 
 .gate-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .gate-input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 13px 16px;
   font-size: 1rem;
-  border: 1px solid var(--border-medium, #d1d5db);
+  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.2));
   border-radius: var(--radius-md, 12px);
-  background: var(--bg-primary, #fff);
-  color: var(--text-primary, #1f2937);
+  background: var(--input-bg, rgba(15, 23, 42, 0.6));
+  color: var(--text-primary, #f8fafc);
   outline: none;
-  transition: border-color 0.15s;
+  box-sizing: border-box;
+  text-align: center;
+  transition: all 0.2s;
 }
 
 .gate-input:focus {
-  border-color: var(--primary, #0f766e);
+  border-color: var(--primary, #0ea5e9);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
 }
 
 .gate-input::placeholder {
-  color: var(--text-tertiary, #9ca3af);
+  color: var(--text-tertiary, #64748b);
 }
 
 .gate-error {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--error, #ef4444);
+  margin: -4px 0 0;
+  font-size: 0.85rem;
+  color: var(--error, #f43f5e);
+  font-weight: 500;
 }
 
 .gate-btn {
-  padding: 12px 24px;
+  padding: 13px 24px;
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: var(--primary, #0f766e);
+  background: var(--primary, #0ea5e9);
   border: none;
   border-radius: var(--radius-md, 12px);
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.1s;
+  transition: all 0.15s ease;
 }
 
 .gate-btn:hover:not(:disabled) {
-  opacity: 0.95;
+  opacity: 0.92;
   transform: translateY(-1px);
 }
 
 .gate-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .gate-enter-active,
 .gate-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
 }
 
 .gate-enter-from,
@@ -158,7 +175,7 @@ function onSubmit() {
 
 .gate-enter-active .gate-card,
 .gate-leave-active .gate-card {
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
 }
 
 .gate-enter-from .gate-card,

@@ -97,9 +97,9 @@
       </nav>
     </header>
 
-    <!-- 主内容区 -->
+    <!-- 主内容区：未通过密码验证前绝不渲染主页 -->
     <main class="main">
-      <NuxtPage />
+      <NuxtPage v-if="!auth.locked.value" />
     </main>
 
     <!-- 设置抽屉 -->
@@ -119,10 +119,10 @@
       {{ toast.message }}
     </div>
 
-    <!-- 密码门（仅在用户发起搜索时弹出） -->
+    <!-- 密码门：未通过密码验证时全屏拦截 -->
     <ClientOnly>
       <PasswordGate
-        :show="showPasswordGate"
+        :show="auth.locked.value && !auth.loading.value"
         :error="auth.error.value || ''"
         :submitting="unlockSubmitting"
         @unlock="onUnlock" />
