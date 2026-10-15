@@ -26,15 +26,13 @@
 
         <!-- 桌面端导航链接 -->
         <div class="nav-links">
-          <a
+          <NuxtLink
             v-for="link in navLinks"
             :key="link.name"
-            :href="link.isCurrent ? undefined : link.url"
-            :class="['nav-link', { active: link.isCurrent }]"
-            :target="link.isCurrent ? undefined : '_blank'"
-            :rel="link.isCurrent ? undefined : 'noopener noreferrer'">
+            :to="link.url"
+            :class="['nav-link', { active: link.isCurrent }]">
             {{ link.name }}
-          </a>
+          </NuxtLink>
         </div>
 
         <div class="nav-actions">
@@ -81,16 +79,14 @@
         <ClientOnly>
           <Transition name="nav-menu">
             <div v-if="showNavMenu" class="nav-dropdown">
-              <a
+              <NuxtLink
                 v-for="link in navLinks"
                 :key="link.name"
-                :href="link.isCurrent ? undefined : link.url"
+                :to="link.url"
                 :class="['nav-dropdown__link', { active: link.isCurrent }]"
-                :target="link.isCurrent ? undefined : '_blank'"
-                :rel="link.isCurrent ? undefined : 'noopener noreferrer'"
                 @click="showNavMenu = false">
                 {{ link.name }}
-              </a>
+              </NuxtLink>
             </div>
           </Transition>
         </ClientOnly>
@@ -154,10 +150,14 @@ const openSettings = ref(false);
 const showPasswordGate = ref(false);
 const showNavMenu = ref(false);
 
+const route = useRoute();
+const currentTab = computed(() => (route.query?.tab === "coupons" ? "coupons" : "pan"));
+
 // 导航链接
-const navLinks = [
-  { name: "网盘搜索", url: "", isCurrent: true },
-];
+const navLinks = computed(() => [
+  { name: "网盘搜索", url: "/?tab=pan", isCurrent: currentTab.value === "pan" },
+  { name: "生活特惠 (滴滴·美团)", url: "/?tab=coupons", isCurrent: currentTab.value === "coupons" },
+]);
 
 // 社交链接
 const socialLinks = [
