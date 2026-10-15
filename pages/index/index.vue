@@ -259,6 +259,7 @@ async function onSearch() {
   if (auth.locked.value && requestUnlock) {
     requestUnlock(doSearch);
     return;
+  }
   await doSearch();
 }
 
