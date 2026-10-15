@@ -5,45 +5,45 @@
       <div class="coupon-header-left">
         <h2 class="coupon-title">
           <span class="coupon-icon">🎟️</span>
-          <span>生活特惠领券</span>
-          <span class="coupon-count-badge">{{ filteredCoupons.length }} 款可用</span>
+          <span>生活特惠领券大厅</span>
+          <span class="coupon-count-badge">{{ filteredCoupons.length }} 款真实有效</span>
         </h2>
         <p class="coupon-subtitle">
-          精选滴滴打车、美团外卖、车主加油等全网高额立减券 · 手机一键直达拉起 App
+          人工严格核验滴滴打车、美团外卖、车主加油真实直达入口 · 支持一键复制纯净链接与拉起 App
         </p>
       </div>
-      <button class="btn-tip-toggle" @click="showTipsModal = !showTipsModal" title="查看隐藏券提取技巧">
+      <button class="btn-tip-toggle" type="button" @click="showTipsModal = !showTipsModal" title="查看隐藏券提取技巧">
         <span>💡 深度隐藏券获取秘籍</span>
       </button>
     </div>
 
-    <!-- 隐藏券获取指南弹窗/卡片 -->
+    <!-- 隐藏券获取指南卡片 -->
     <Transition name="fade">
       <div v-if="showTipsModal" class="tips-box">
         <div class="tips-box-header">
-          <h4>💡 如何获取更多滴滴/美团深藏券？</h4>
-          <button class="tips-close-btn" @click="showTipsModal = false">✕</button>
+          <h4>💡 滴滴与美团隐藏大额神券获取诀窍</h4>
+          <button class="tips-close-btn" type="button" @click="showTipsModal = false">✕</button>
         </div>
         <div class="tips-grid">
           <div class="tip-card">
             <div class="tip-num">1</div>
             <div class="tip-body">
-              <strong>微信小程序页面路径提取</strong>
-              <p>在微信里打开滴滴或美团大额活动页面，点击右上角「···」选择「复制链接」或「复制页面路径」，即可获取永久直达入口。</p>
+              <strong>微信支付 · 有优惠金币</strong>
+              <p>微信搜「微信支付商家消费券」，使用微信买单赠送的金币，每周可 0 元免费兑换 5~15 元滴滴无门槛打车立减金和美团通用外卖券。</p>
             </div>
           </div>
           <div class="tip-card">
             <div class="tip-num">2</div>
             <div class="tip-body">
-              <strong>微信支付 · 有优惠金币</strong>
-              <p>微信搜「微信支付商家消费券」，微信买单后赠送的金币，每周可免费兑换 5~15 元滴滴无门槛打车立减金和美团外卖券。</p>
+              <strong>美团官方专属暗号口令</strong>
+              <p>打开美团外卖 App 首页搜索框，直接搜索数字暗号【333777】或【333555】，可秒级触发平台隐藏大额膨胀红包。</p>
             </div>
           </div>
           <div class="tip-card">
             <div class="tip-num">3</div>
             <div class="tip-body">
-              <strong>银行/运营商异业合作</strong>
-              <p>招商银行掌上生活、工行融e联、中国联通沃钱包、云闪付 App 内常年有 1 元购 10 元滴滴出行/美团外卖券包活动。</p>
+              <strong>微信小程序页面路径提取</strong>
+              <p>如果在微信里遇到超划算的打车或外卖券，点右上角「···」复制链接，提取其中的网页地址，即可得到长期直达通道。</p>
             </div>
           </div>
         </div>
@@ -55,6 +55,7 @@
       <button
         v-for="cat in categories"
         :key="cat.key"
+        type="button"
         :class="['cat-btn', { active: currentCategory === cat.key }]"
         @click="currentCategory = cat.key">
         {{ cat.name }} ({{ countCategory(cat.key) }})
@@ -87,20 +88,35 @@
         <h3 class="card-title">{{ item.title }}</h3>
         <p class="card-desc">{{ item.description }}</p>
 
-        <!-- 标签列表 -->
-        <div class="card-tags">
-          <span v-for="tag in item.tags.slice(0, 3)" :key="tag" class="tag-pill">
-            #{{ tag }}
-          </span>
+        <!-- 官方直达域名与标签 -->
+        <div class="card-meta-row">
+          <span class="url-domain-tag">🌐 {{ getDomain(item.h5Url) }}</span>
+          <div class="card-tags">
+            <span v-for="tag in item.tags.slice(0, 3)" :key="tag" class="tag-pill">
+              #{{ tag }}
+            </span>
+          </div>
         </div>
 
         <!-- 底部操作按钮 -->
         <div class="card-actions">
-          <button class="btn-claim" @click="handleOpen(item)">
+          <button class="btn-claim" type="button" @click="handleOpen(item)">
             <span>📱 打开 App 领取</span>
           </button>
-          <button class="btn-copy" @click="handleCopy(item)" title="复制活动链接">
-            <span>📋 复制链接</span>
+          <button
+            v-if="item.secretCode"
+            class="btn-secret-code"
+            type="button"
+            @click="handleCopyCode(item.secretCode)"
+            title="复制专属搜索口令">
+            <span>🔑 复制口令</span>
+          </button>
+          <button
+            class="btn-copy"
+            type="button"
+            @click="handleCopy(item)"
+            title="复制纯净链接（不带任何中文或前缀）">
+            <span>📋 复制纯链接</span>
           </button>
         </div>
       </div>
@@ -142,7 +158,16 @@ function getPlatformLabel(platform: CouponItem["platform"]): string {
     case "eleme":
       return "饿了么";
     default:
-      return "生活特惠";
+      return "特惠生活";
+  }
+}
+
+function getDomain(url: string): string {
+  try {
+    const u = new URL(url);
+    return u.hostname;
+  } catch {
+    return "官方直达";
   }
 }
 
@@ -171,30 +196,46 @@ const filteredCoupons = computed(() => {
 });
 
 function handleOpen(item: CouponItem) {
-  // 判断是否移动端
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
   );
 
   if (isMobile && item.appScheme) {
-    // 尝试拉起 App
+    // 移动端优先拉起 App
     window.location.href = item.appScheme;
     setTimeout(() => {
-      // 1.5 秒未唤起则回退到 H5 网页
       window.open(item.h5Url, "_blank");
     }, 1500);
   } else {
-    // 桌面端或无 scheme 时直接打开 H5 页面
+    // 桌面端或无 scheme 时直接在新标签页打开 H5 页面
     window.open(item.h5Url, "_blank");
   }
-  showToast(`正在跳转到 ${item.title} 领券入口`, "success");
+  showToast(`正在跳转到 ${item.title}`, "success");
 }
 
 function handleCopy(item: CouponItem) {
-  const text = `${item.title} - ${item.discount}\n直达链接：${item.h5Url}`;
+  // 必须只复制纯链接，绝不添加任何标题、文字或前后缀！
+  const text = (item.h5Url || "").trim();
+  if (!text) {
+    showToast("暂无可复制链接", "error");
+    return;
+  }
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(
-      () => showToast("已复制领券链接，可发至微信或浏览器打开", "success"),
+      () => showToast("已复制纯净直达链接", "success"),
+      () => fallbackCopy(text)
+    );
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function handleCopyCode(code: string) {
+  const text = (code || "").trim();
+  if (!text) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(
+      () => showToast(`已复制口令【${text}】，打开美团搜索即可`, "success"),
       () => fallbackCopy(text)
     );
   } else {
@@ -211,7 +252,7 @@ function fallbackCopy(text: string) {
   ta.select();
   try {
     document.execCommand("copy");
-    showToast("已复制领券链接，可发至微信或浏览器打开", "success");
+    showToast("已复制到剪贴板", "success");
   } catch {
     showToast("复制失败，请手动长按链接复制", "error");
   } finally {
@@ -496,11 +537,28 @@ function fallbackCopy(text: string) {
   flex: 1;
 }
 
+.card-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.url-domain-tag {
+  font-size: 0.72rem;
+  color: var(--text-secondary, #94a3b8);
+  font-family: monospace;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
 .card-tags {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
 }
 
 .tag-pill {
@@ -514,10 +572,12 @@ function fallbackCopy(text: string) {
 .card-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn-claim {
   flex: 1;
+  min-width: 120px;
   padding: 10px 14px;
   font-size: 0.88rem;
   font-weight: 600;
@@ -535,6 +595,23 @@ function fallbackCopy(text: string) {
 
 .btn-claim:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-secret-code {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #f59e0b;
+  border-radius: 9px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secret-code:hover {
+  background: rgba(245, 158, 11, 0.25);
   transform: translateY(-1px);
 }
 
