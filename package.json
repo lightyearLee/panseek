@@ -1,7 +1,7 @@
 {
-  "name": "panseek",
+  "name": "sopan",
   "version": "1.0.0",
-  "description": "PanSeek · 全网最全的网盘搜索工具",
+  "description": "SoPan · 全网网盘聚合搜索工具",
   "type": "module",
   "private": true,
   "author": {
@@ -42,7 +42,8 @@
   "devDependencies": {
     "@types/sql.js": "^1.4.11",
     "@vitest/coverage-v8": "^2.1.0",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "wrangler": "^4.151.0"
   },
   "license": "MIT",
   "keywords": [
