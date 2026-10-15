@@ -12,7 +12,7 @@ export function useSeoConfig() {
   const siteUrl = (config.public?.siteUrl as string) || "";
 
   const SEO = {
-    title: "PanSeek-全网最全的网盘搜索_知识分享萌",
+    title: "PanSeek - 全网网盘聚合搜索",
     description:
       "PanSeek 是一款网盘资源聚合搜索工具，支持阿里云盘、夸克网盘、百度网盘、115、迅雷云盘等多平台一键检索，快速发现电影、剧集、音乐、软件等分享资源。",
     keywords:

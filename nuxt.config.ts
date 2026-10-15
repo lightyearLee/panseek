@@ -57,11 +57,9 @@ export default defineNuxtConfig({
     cacheTtlMinutes: channelsConfig.cacheTtlMinutes,
     public: {
       apiBase: "/api",
-      siteUrl: "https://panseek.bx9y.com.cn",
+      siteUrl: "https://panseek.pages.dev",
       // 向前端暴露默认频道清单
       tgDefaultChannels: channelsConfig.defaultChannels,
-      // 百度统计 ID（环境变量注入，不提交到仓库）
-      baiduTongjiId: process.env.NUXT_PUBLIC_BAIDU_TONGJI_ID || "",
     },
   },
 });
