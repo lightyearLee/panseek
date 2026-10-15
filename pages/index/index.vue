@@ -211,7 +211,6 @@ const {
 } = useSearch();
 const { settings, loadSettings } = useSettings();
 const auth = useAuth();
-const { checkSearchAuth } = useWxAuth();
 const requestUnlock = inject<(onSuccess?: () => void) => void>("requestUnlock");
 
 // 获取搜索选项（使用最新的用户设置）
@@ -260,9 +259,6 @@ async function onSearch() {
   if (auth.locked.value && requestUnlock) {
     requestUnlock(doSearch);
     return;
-  }
-  // 微信公众号认证（前3次免费，之后弹窗，不阻塞搜索）
-  checkSearchAuth();
   await doSearch();
 }
 

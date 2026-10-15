@@ -156,10 +156,7 @@ const showNavMenu = ref(false);
 
 // 导航链接
 const navLinks = [
-  { name: "首页", url: "https://www.bx9y.com.cn" },
-  { name: "导航站", url: "https://hao.bx9y.com.cn" },
   { name: "网盘搜索", url: "", isCurrent: true },
-  { name: "工具网", url: "https://tool.bx9y.com.cn" },
 ];
 
 // 社交链接
