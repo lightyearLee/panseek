@@ -29,25 +29,6 @@
       </aside>
     </div>
 
-    <!-- 模式切换：网盘聚合搜索 vs 生活特惠领券 -->
-    <div class="mode-switch-row">
-      <div class="mode-tabs">
-        <button
-          type="button"
-          :class="['mode-tab-btn', { active: activeMode === 'pan' }]"
-          @click="switchMode('pan')">
-          🔍 网盘聚合搜索
-        </button>
-        <button
-          type="button"
-          :class="['mode-tab-btn', { active: activeMode === 'coupon' }]"
-          @click="switchMode('coupon')">
-          🎟️ 生活领券 (滴滴·美团)
-          <span class="mode-badge-new">HOT</span>
-        </button>
-      </div>
-    </div>
-
     <!-- 搜索框 -->
     <SearchBox
       v-model="kw"
@@ -60,24 +41,8 @@
       @pause="pauseSearch"
       @continue="handleContinueSearch" />
 
-    <!-- 优惠券智能联想推荐条 (网盘模式下输入生活关键词时引导) -->
-    <div v-if="activeMode === 'pan' && couponMatches.length > 0 && kw.trim()" class="coupon-smart-banner">
-      <div class="smart-banner-info">
-        <span class="smart-badge">🎟️ 优惠券发现</span>
-        <span>为您匹配到 <strong>{{ couponMatches.length }}</strong> 款相关的滴滴/美团生活立减券</span>
-      </div>
-      <button class="btn-smart-view" type="button" @click="switchMode('coupon')">
-        立即查看领券 →
-      </button>
-    </div>
-
-    <!-- 生活特惠领券专区 -->
-    <CouponSection v-if="activeMode === 'coupon'" :keyword="kw" />
-
-    <!-- 网盘搜索模式内容 -->
-    <template v-else>
-      <!-- 统计和过滤器 -->
-      <div v-if="searched" class="stats-bar">
+    <!-- 统计和过滤器 -->
+    <div v-if="searched" class="stats-bar">
       <div class="stats-content">
         <div class="stats-main">
           <span class="stat-item">
@@ -170,64 +135,23 @@
       <span>{{ searchState.error }}</span>
     </section>
 
-      <!-- 豆瓣电影新片榜 - 搜索时隐藏 -->
-      <section v-if="!searched" class="douban-hot-section">
-        <ErrorBoundary message="豆瓣热榜加载失败">
-          <DoubanHotSection ref="doubanHotRef" :on-search="quickSearch" />
-        </ErrorBoundary>
-      </section>
-    </template>
+    <!-- 豆瓣电影新片榜 - 搜索时隐藏 -->
+    <section v-if="!searched" class="douban-hot-section">
+      <ErrorBoundary message="豆瓣热榜加载失败">
+        <DoubanHotSection ref="doubanHotRef" :on-search="quickSearch" />
+      </ErrorBoundary>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { PLATFORM_INFO } from "~/config/plugins";
-import { COUPONS_DATA } from "~/config/coupons";
 
 const config = useRuntimeConfig();
 const apiBase = (config.public?.apiBase as string) || "/api";
 const route = useRoute();
 const router = useRouter();
-
-// 模式切换状态：pan (网盘搜索) vs coupon (生活领券)
-const activeMode = ref<"pan" | "coupon">("pan");
-
-watch(
-  () => route.query.tab,
-  (tab) => {
-    if (tab === "coupons" || tab === "coupon") {
-      activeMode.value = "coupon";
-    } else {
-      activeMode.value = "pan";
-    }
-  },
-  { immediate: true }
-);
-
-function switchMode(mode: "pan" | "coupon") {
-  activeMode.value = mode;
-  router.replace({
-    query: {
-      ...route.query,
-      tab: mode === "coupon" ? "coupons" : undefined,
-    },
-  });
-}
-
-// 优惠券匹配检索
-const couponMatches = computed(() => {
-  const q = kw.value.trim().toLowerCase();
-  if (!q) return [];
-  return COUPONS_DATA.filter((c) => {
-    return (
-      c.title.toLowerCase().includes(q) ||
-      c.description.toLowerCase().includes(q) ||
-      c.tags.some((t) => t.toLowerCase().includes(q)) ||
-      c.categoryName.toLowerCase().includes(q)
-    );
-  });
-});
 
 // 热搜组件引用
 const hotSearchRef = ref<InstanceType<typeof HotSearchSection> | null>(null);
@@ -252,12 +176,8 @@ onMounted(async () => {
 
 // 搜索相关状态
 const kw = ref("");
-const placeholder = computed(() => {
-  if (activeMode.value === "coupon") {
-    return "搜索生活特惠券：输入 滴滴 / 打车 / 美团 / 外卖 / 加油 / 肯德基 ...";
-  }
-  return "搜索网盘资源，支持百度云、阿里云盘、夸克网盘、115网盘、迅雷云盘、天翼云盘、123网盘、移动云盘、UC网盘等";
-});
+const placeholder =
+  "搜索网盘资源，支持百度云、阿里云盘、夸克网盘、115网盘、迅雷云盘、天翼云盘、123网盘、移动云盘、UC网盘等";
 
 // 排序和过滤
 const sortType = ref<"default" | "date-desc" | "date-asc" | "name-asc" | "name-desc">("default");
@@ -335,10 +255,6 @@ async function doSearch() {
 
 // 搜索执行
 async function onSearch() {
-  if (activeMode.value === "coupon") {
-    // 优惠券模式下为纯前端关键词实时筛选，无需请求后端
-    return;
-  }
   if (!kw.value || searchState.value.loading) return;
   if (auth.locked.value && requestUnlock) {
     requestUnlock(doSearch);
@@ -1067,105 +983,5 @@ function visibleSorted(items: any[]) {
     animation: none;
     opacity: 0.7;
   }
-}
-
-/* 模式切换栏与优惠券联想推荐条 */
-.mode-switch-row {
-  display: flex;
-  justify-content: center;
-  margin: 18px 0 22px;
-}
-
-.mode-tabs {
-  display: inline-flex;
-  padding: 4px;
-  background: var(--input-bg, rgba(15, 23, 42, 0.6));
-  border-radius: 999px;
-  border: 1px solid var(--border-medium, rgba(255, 255, 255, 0.1));
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-.mode-tab-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 22px;
-  border-radius: 999px;
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: var(--text-secondary, #94a3b8);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mode-tab-btn:hover {
-  color: var(--text-primary, #f8fafc);
-}
-
-.mode-tab-btn.active {
-  color: #fff;
-  background: var(--primary, #0ea5e9);
-  font-weight: 600;
-  box-shadow: 0 2px 10px rgba(14, 165, 233, 0.35);
-}
-
-.mode-badge-new {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 999px;
-  background: #f43f5e;
-  color: #fff;
-  line-height: 1.2;
-}
-
-.coupon-smart-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 16px 0 20px;
-  padding: 12px 18px;
-  background: linear-gradient(90deg, rgba(255, 125, 0, 0.12), rgba(234, 179, 8, 0.12));
-  border: 1px solid rgba(255, 125, 0, 0.3);
-  border-radius: 12px;
-}
-
-.smart-banner-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-  color: var(--text-primary, #f8fafc);
-}
-
-.smart-badge {
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: #ff7d00;
-  color: #fff;
-}
-
-.btn-smart-view {
-  background: #ff7d00;
-  color: #fff;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-smart-view:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
 }
 </style>

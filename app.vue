@@ -150,14 +150,10 @@ const openSettings = ref(false);
 const showPasswordGate = ref(false);
 const showNavMenu = ref(false);
 
-const route = useRoute();
-const currentTab = computed(() => (route.query?.tab === "coupons" ? "coupons" : "pan"));
-
 // 导航链接
-const navLinks = computed(() => [
-  { name: "网盘搜索", url: "/?tab=pan", isCurrent: currentTab.value === "pan" },
-  { name: "生活特惠 (滴滴·美团)", url: "/?tab=coupons", isCurrent: currentTab.value === "coupons" },
-]);
+const navLinks = [
+  { name: "网盘搜索", url: "/", isCurrent: true },
+];
 
 // 社交链接
 const socialLinks = [
